@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalorientracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<div class="top-bar">
+    <label class="darkmode-toggle">
+        🌙 Darkmode
+        <input type="checkbox" id="darkmode-toggle">
+    </label>
+</div>
+
+<body>
+
+
+
+    <header>
+        <div class="header-left">
+            <label for="zeitraum">Zeitraum:</label>
+            <select id="zeitraum">
+                <option value="7">Letzte 7 Tage</option>
+                <option value="30">Letzte 30 Tage</option>
+                <option value="90">Letzte 90 Tage</option>
+            </select>
+        </div>
+        <div class="header-right">
+            <label for="anzeige">Anzeige:</label>
+            <select id="anzeige">
+                <option value="kalorien">Kalorien</option>
+                <option value="gewicht">Gewicht</option>
+            </select>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </header>
+
+    <main>
+        <section id="graph-container">
+            <h2>Verlauf</h2>
+            <!-- Hier kommt später der Chart (z.B. via Chart.js) -->
+            <canvas id="graph"></canvas>
+        </section>
+
+        <section id="eingabe-bereich">
+            <h2>Neue Eingabe</h2>
+            <form id="eingabe-form">
+                <div class="input-group">
+                    <label for="datum">Datum:</label>
+                    <input type="date" id="datum" name="datum" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="gewicht">Gewicht (kg):</label>
+                    <input type="number" id="gewicht" name="gewicht" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="kalorien">Kalorien (kcal):</label>
+                    <input type="number" id="kalorien" name="kalorien">
+                </div>
+                <div class="input-group">
+                    <label for="eiweiss">Eiweiß (g):</label>
+                    <input type="number" id="eiweiss" name="eiweiss">
+                </div>
+                <div class="input-group">
+                    <label for="kohlehydrate">Kohlenhydrate (g):</label>
+                    <input type="number" id="kohlehydrate" name="kohlehydrate">
+                </div>
+                <div class="input-group">
+                    <label for="fette">Fette (g):</label>
+                    <input type="number" id="fette" name="fette">
+                </div>
+                <button type="submit">Eintrag speichern</button>
+            </form>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const form = document.getElementById('eingabe-form');
+    const anzeigeSelect = document.getElementById('anzeige');
+    const chartCtx = document.getElementById('graph').getContext('2d');
+    const darkToggle = document.getElementById('darkmode-toggle');
+    const zeitraumSelect = document.getElementById('zeitraum');
+
+    let daten = JSON.parse(localStorage.getItem('trackerDaten')) || [];
+
+    // Hilfsfunktionen
+    function getLabels(data) {
+        return data.map(e => e.datum);
+    }
+
+    function getWerte(data, typ) {
+        return data.map(e => typ === 'gewicht' ? e.gewicht : e.kalorien);
+    }
+
+    function gefilterteDaten(anzahlTage) {
+        const grenze = new Date();
+        grenze.setHours(0, 0, 0, 0);
+        grenze.setDate(grenze.getDate() - anzahlTage);
+        return daten.filter(e => {
+            const d = new Date(e.datum);
+            d.setHours(0, 0, 0, 0);
+            return d >= grenze;
+        });
+    }
+
+    // Darkmode beim Laden anwenden
+    if (localStorage.getItem('darkmode') === 'true') {
+        document.body.classList.add('darkmode');
+        darkToggle.checked = true;
+    }
+
+    // Chart.js Optionen abhängig vom Modus
+    function getChartOptions(dark) {
+        return {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: dark ? '#f0f0f0' : '#222'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Verlauf',
+                    color: dark ? '#f0f0f0' : '#222'
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: dark ? '#f0f0f0' : '#222'
+                    },
+                    grid: {
+                        color: dark ? '#444' : '#ccc'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: dark ? '#f0f0f0' : '#222'
+                    },
+                    grid: {
+                        color: dark ? '#444' : '#ccc'
+                    }
+                }
+            }
+        };
+    }
+
+    // Chart initialisieren NACH Darkmode-Check
+    const chart = new Chart(chartCtx, {
+        type: 'line',
+        data: {
+            labels: getLabels(daten),
+            datasets: [{
+                label: 'Gewicht (kg)',
+                data: getWerte(daten, 'gewicht'),
+                borderColor: 'blue',
+                backgroundColor: 'lightblue',
+                tension: 0.3
+            }, {
+                label: 'Kalorien (kcal)',
+                data: getWerte(daten, 'kalorien'),
+                borderColor: 'orange',
+                backgroundColor: 'moccasin',
+                tension: 0.3,
+                hidden: true
+            }]
+        },
+        options: getChartOptions(document.body.classList.contains('darkmode'))
+    });
+
+    // Darkmode umschalten
+    darkToggle.addEventListener('change', () => {
+        const isDark = darkToggle.checked;
+        document.body.classList.toggle('darkmode');
+        localStorage.setItem('darkmode', isDark);
+
+        // Chart neu stylen
+        chart.options = getChartOptions(isDark);
+        chart.update();
+    });
+
+    form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const eintrag = {
+        datum: document.getElementById('datum').value,
+        gewicht: parseFloat(document.getElementById('gewicht').value) || null,
+        kalorien: parseInt(document.getElementById('kalorien').value) || null,
+        eiweiss: parseInt(document.getElementById('eiweiss').value) || null,
+        kohlehydrate: parseInt(document.getElementById('kohlehydrate').value) || null,
+        fette: parseInt(document.getElementById('fette').value) || null
+    };
+
+    daten.push(eintrag);
+    daten.sort((a, b) => new Date(a.datum) - new Date(b.datum));
+    localStorage.setItem('trackerDaten', JSON.stringify(daten));
+
+    const tage = parseInt(zeitraumSelect.value);
+    const gefiltert = gefilterteDaten(tage);
+
+    chart.data.labels = getLabels(gefiltert);
+    chart.data.datasets[0].data = getWerte(gefiltert, 'gewicht');
+    chart.data.datasets[1].data = getWerte(gefiltert, 'kalorien');
+    chart.update();
+
+    form.reset();
+});
+
+
+    // Rest deines Codes bleibt gleich ...
+</script>
+
+
+
+</body>
+
+</html>
