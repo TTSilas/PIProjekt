@@ -18,7 +18,7 @@ $user = $_SESSION['username'];
 $stmt = $pdo->prepare("
     SELECT 
         v.Datum,
-        SUM(m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9) AS Tageskalorien
+        SUM(m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9)*(v.Menge/100) AS Tageskalorien
     FROM Verlauf v
     JOIN Produkt p ON v.EAN = p.EAN
     JOIN Makros m ON p.MakroID = m.MakroID

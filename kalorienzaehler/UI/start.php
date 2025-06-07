@@ -12,7 +12,7 @@ $user = $_SESSION['username'];
 // Hier deine SQL-Abfrage (Produktliste mit Menge usw.)
 $stmt = $pdo->prepare("
     SELECT v.Datum, p.Name, p.Kategorie, v.Menge,
-           ((m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9) * (v.Menge / 100))/100 AS KalorienProEinheit
+           (m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9) * (v.Menge / 100) AS KalorienProEinheit
     FROM Verlauf v
     JOIN Produkt p ON v.EAN = p.EAN
     JOIN Makros m ON p.MakroID = m.MakroID
@@ -66,7 +66,8 @@ $produkte = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($produkt['Name']) ?></td>
                         <td><?= htmlspecialchars($produkt['Kategorie']) ?></td>
                         <td><?= htmlspecialchars($produkt['Menge']) ?></td>
-                        <td><?= round($produkt['KalorienProEinheit'] * $produkt['Menge']) ?></td>
+                        <td><?= round($produkt['KalorienProEinheit']) ?></td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
