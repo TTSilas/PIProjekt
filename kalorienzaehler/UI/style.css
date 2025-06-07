@@ -1,114 +1,131 @@
+/* 💻 Grundlayout */
 body {
-  font-family: sans-serif;
-  margin: 0;
-  background-color: #f9f9f9;
-  color: #333;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(-45deg, #e3f2fd, #bbdefb, #e1f5fe, #b3e5fc);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #333;
+    margin: 0;
+    padding: 30px;
+    max-width: 900px;
+    margin: auto;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem;
-  background-color: #4caf50;
-  color: #272727;
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
 }
 
-main {
-  padding: 1rem;
+h1, h2, h3 {
+    color: #0d47a1;
+    text-align: center;
 }
 
-#graph-container {
-  background-color: #fff;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+/* 📄 Formular */
+form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
 }
 
-#graph-placeholder {
-  height: 300px;
-  border: 2px dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
+/* ✏️ Eingabefelder */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border 0.3s;
 }
 
-#eingabe-bereich {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+input:focus {
+    border-color: #64b5f6;
+    outline: none;
 }
 
-.input-group {
-  margin-bottom: 1rem;
+/* 🔘 Buttons (auch Links als Button) */
+a.button-link {
+    background: linear-gradient(45deg, #ff6ec4, #7873f5);
+    color: white;
+    padding: 12px 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(255,110,196,0.6);
+    display: inline-block;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-input {
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-
-button {
-  padding: 0.6rem 1.2rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-.top-bar {
-  width: 100%;
-  padding: 0.5rem 0;
-  display: flex;
-  justify-content: center;
-  background-color: #eee; /* Lightmode */
-  border-bottom: 1px solid #ccc;
-}
-
-body {
-  background-color: #f5f5f5;
-  color: #222;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-/* Darkmode Styles am Ende */
-.darkmode {
-  background-color: #121212;
-  color: #f0f0f0;
+a.button-link:hover,
+a.button-link:focus {
+    background: linear-gradient(45deg, #ff3ea7, #5a47d1);
+    box-shadow: 0 6px 20px rgba(255,62,167,0.8);
+    transform: translateY(-3px);
+    outline: none;
 }
 
 
-.darkmode #Bedienfeld,
-.darkmode #Ausgabefeld,
-.darkmode .top-bar {
-  background-color: #1e1e1e !important;
-  color: #ddd !important;
-  border: 1px solid #333;
-  
+/* 🧾 Tabelle */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
 }
 
+th, td {
+    padding: 14px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
 
-.darkmode #eingabe-bereich,
-.darkmode #graph-container,
-.darkmode input,
-.darkmode select,
-.darkmode button {
-  background-color: #2a2a2a;
-  color: #eee;
+th {
+    background-color: #e3f2fd;
+    font-weight: bold;
+}
 
+canvas {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.scroll-container {
+    max-height: 300px;      /* Begrenzte Höhe */
+    overflow-y: auto;       /* Vertikales Scrollen bei Überlauf */
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fafafa;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
 

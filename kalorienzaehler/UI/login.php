@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && password_verify($password, $user['Passwort'])) {
         // Passwort stimmt: Session setzen
         $_SESSION['username'] = $username;
-        header('Location: dashboard.php');
+        header('Location: start.php');
         exit;
     } else {
         echo "Falscher Benutzername oder Passwort.";

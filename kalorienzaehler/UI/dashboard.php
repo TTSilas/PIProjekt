@@ -2,78 +2,142 @@
 session_start();
 require 'db.php';
 
+// Fehler anzeigen (nur für Entwicklung)
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Benutzer eingeloggt?
 if (!isset($_SESSION['username'])) {
     header('Location: login.html');
     exit;
 }
 
-$username = $_SESSION['username'];
+$user = $_SESSION['username'];
 
-echo "<h1>Willkommen, " . htmlspecialchars($username) . "!</h1>";
-echo "<p><a href='logout.php'>Ausloggen</a></p>";
-
-// Verlauf mit Produkt- und Makro-Daten abfragen
+// Kalorien aus Verlauf berechnen (Makros × Kalorienfaktor)
 $stmt = $pdo->prepare("
-    SELECT v.Datum, p.Name, p.Kategorie, m.Kohlenhydrate, m.Fett, m.Eiweiss
+    SELECT 
+        v.Datum,
+        SUM(m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9) AS Tageskalorien
     FROM Verlauf v
     JOIN Produkt p ON v.EAN = p.EAN
     JOIN Makros m ON p.MakroID = m.MakroID
     WHERE v.UserID = ?
-    ORDER BY v.Datum DESC
+    GROUP BY v.Datum
+    ORDER BY v.Datum
 ");
-$stmt->execute([$username]);
-$eintraege = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->execute([$user]);
+$kalorien = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (!$eintraege) {
-    echo "<p>Keine Einträge im Verlauf gefunden.</p>";
-} else {
-    echo "<table border='1' cellpadding='5' cellspacing='0'>";
-    echo "<tr><th>Datum</th><th>Produkt</th><th>Kategorie</th><th>Kohlenhydrate (g)</th><th>Fett (g)</th><th>Eiweiß (g)</th></tr>";
+// Gewichtseinträge
+$stmt = $pdo->prepare("SELECT Datum, Gewicht FROM Gewichtseintrag WHERE UserID = ? ORDER BY Datum");
+$stmt->execute([$user]);
+$gewicht = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($eintraege as $eintrag) {
-        echo "<tr>";
-        echo "<td>" . htmlspecialchars($eintrag['Datum']) . "</td>";
-        echo "<td>" . htmlspecialchars($eintrag['Name']) . "</td>";
-        echo "<td>" . htmlspecialchars($eintrag['Kategorie']) . "</td>";
-        echo "<td>" . htmlspecialchars($eintrag['Kohlenhydrate']) . "</td>";
-        echo "<td>" . htmlspecialchars($eintrag['Fett']) . "</td>";
-        echo "<td>" . htmlspecialchars($eintrag['Eiweiss']) . "</td>";
-        echo "</tr>";
-    }
-    echo "</table>";
+// Daten kombinieren
+$daten = [];
+foreach ($kalorien as $k) {
+    $datum = $k['Datum'];
+    $daten[$datum]['kalorien'] = round($k['Tageskalorien']);
 }
+foreach ($gewicht as $g) {
+    $datum = $g['Datum'];
+    $daten[$datum]['gewicht'] = $g['Gewicht'];
+}
+ksort($daten); // Nach Datum sortieren
+
+// Für JavaScript vorbereiten
+$dates = array_keys($daten);
+$caloriesData = array_map(fn($v) => $v['kalorien'] ?? 0, $daten);
+$weightData = array_map(fn($v) => $v['gewicht'] ?? null, $daten);
 ?>
-<h2>Neuen Eintrag hinzufügen</h2>
 
-<form action="add_entry.php" method="post">
-    Datum:<br>
-    <input type="date" name="datum" required><br><br>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
 
-    <!-- Auswahlfeld für vorhandene Produkte -->
-    Produkt aus Liste auswählen:<br>
-    <select name="ean">
-        <option value="">-- Bitte wählen --</option>
-        <?php
-        // Produkte aus DB laden
-        $produkte = $pdo->query("SELECT EAN, Name FROM Produkt ORDER BY Name")->fetchAll();
-        foreach ($produkte as $produkt) {
-            echo '<option value="' . htmlspecialchars($produkt['EAN']) . '">' . htmlspecialchars($produkt['Name']) . '</option>';
-        }
-        ?>
-    </select><br><br>
+</head>
+<body>
+    <h2>Kalorientracker – Verlauf</h2>
 
-    <strong>Oder neues Produkt hinzufügen:</strong><br>
-    Name:<br>
-    <input type="text" name="neu_name"><br><br>
-    Kategorie:<br>
-    <input type="text" name="neu_kategorie"><br><br>
-    Kohlenhydrate (g):<br>
-    <input type="number" step="0.01" name="neu_kohlenhydrate"><br><br>
-    Fett (g):<br>
-    <input type="number" step="0.01" name="neu_fett"><br><br>
-    Eiweiß (g):<br>
-    <input type="number" step="0.01" name="neu_eiweiss"><br><br>
+    <label><input type="checkbox" id="showCalories" checked> Kalorien anzeigen</label>
+    <label><input type="checkbox" id="showWeight" checked> Gewicht anzeigen</label>
 
-    <input type="submit" value="Eintragen">
-</form>
+    <canvas id="chart" style="max-width: 800px; height: 400px;"></canvas>
 
+    <script>
+        const dates = <?= json_encode($dates) ?>;
+        const calories = <?= json_encode($caloriesData) ?>;
+        const weight = <?= json_encode($weightData) ?>;
+
+        const ctx = document.getElementById('chart').getContext('2d');
+
+        const chartConfig = {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Kalorien',
+                        data: calories,
+                        borderColor: 'orange',
+                        backgroundColor: 'rgba(255,165,0,0.2)',
+                        yAxisID: 'yCalories'
+                    },
+                    {
+                        label: 'Gewicht (kg)',
+                        data: weight,
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0,0,255,0.2)',
+                        yAxisID: 'yWeight'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                stacked: false,
+                scales: {
+                    yCalories: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Kalorien' },
+                        beginAtZero: true
+                    },
+                    yWeight: {
+                        type: 'linear',
+                        position: 'right',
+                        title: { display: true, text: 'Gewicht (kg)' },
+                        beginAtZero: false,
+                        grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        };
+
+        const myChart = new Chart(ctx, chartConfig);
+
+        // Checkbox-Steuerung
+        document.getElementById('showCalories').addEventListener('change', function () {
+            myChart.data.datasets[0].hidden = !this.checked;
+            myChart.update();
+        });
+
+        document.getElementById('showWeight').addEventListener('change', function () {
+            myChart.data.datasets[1].hidden = !this.checked;
+            myChart.update();
+        });
+    </script>
+
+    <br>
+<a href="start.php" class="button-link">Zurück zur Startseite</a>
+
+</body>
+</html>
