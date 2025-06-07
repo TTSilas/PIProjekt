@@ -1,4 +1,4 @@
-
+USE Kalorientracker;
 INSERT INTO Makros (Kohlenhydrate, Fett, Eiweiss) VALUES (13.8, 0.2, 0.3);
 INSERT INTO Produkt (EAN, MakroID, Name, Kategorie) VALUES (1234567890123, 1, 'Apfel', 'Obst');
 
