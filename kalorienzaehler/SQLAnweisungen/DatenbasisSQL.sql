@@ -5,6 +5,7 @@ CREATE TABLE User
 (
     UserID   VARCHAR(30),
     Passwort VARCHAR(255),
+    Darkemode bit,
     PRIMARY KEY (UserID)
 );
 
@@ -21,8 +22,8 @@ CREATE TABLE Produkt
 (
     EAN       double,
     MakroID   int NOT NULL,
-    Name      varchar(30),
-    Kategorie varchar(30),
+    Name      varchar(255),
+    Kategorie varchar(255),
     PRIMARY KEY (EAN),
     FOREIGN KEY (MakroID) REFERENCES Makros (MakroID)
 );
@@ -33,6 +34,7 @@ CREATE TABLE Verlauf
     UserID    varchar(30),
     EAN       double,
     Datum     date,
+    Menge     double(10,2),
     PRIMARY KEY (VerlaufID),
     FOREIGN KEY (UserID) REFERENCES User (UserID),
     FOREIGN KEY (EAN) REFERENCES Produkt (EAN)
