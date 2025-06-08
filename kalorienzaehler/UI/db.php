@@ -11,5 +11,3 @@ try {
     die("Datenbank-Verbindungsfehler: " . $e->getMessage());
 }
 ?>
-
-

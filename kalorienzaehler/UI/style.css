@@ -9,15 +9,26 @@ body {
     padding: 30px;
     max-width: 900px;
     margin: auto;
+    
 }
 
 @keyframes gradientBG {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     color: #0d47a1;
     text-align: center;
 }
@@ -27,7 +38,7 @@ form {
     background: rgba(255, 255, 255, 0.95);
     padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px;
 }
 
@@ -37,7 +48,7 @@ input[type="password"],
 input[type="number"],
 input[type="date"],
 select {
-    width: 100%;
+    width: 97%;
     padding: 12px;
     margin-top: 10px;
     margin-bottom: 20px;
@@ -62,17 +73,20 @@ a.button-link {
     border-radius: 30px;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 4px 15px rgba(255,110,196,0.6);
+    box-shadow: 0 4px 15px rgba(255, 110, 196, 0.6);
     display: inline-block;
     transition: all 0.3s ease;
     letter-spacing: 0.05em;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    width: 500px;
+    text-align: center;
 }
 
 a.button-link:hover,
 a.button-link:focus {
     background: linear-gradient(45deg, #ff3ea7, #5a47d1);
-    box-shadow: 0 6px 20px rgba(255,62,167,0.8);
+    box-shadow: 0 6px 20px rgba(255, 62, 167, 0.8);
     transform: translateY(-3px);
     outline: none;
 }
@@ -85,11 +99,12 @@ table {
     background-color: white;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 30px;
 }
 
-th, td {
+th,
+td {
     padding: 14px;
     border-bottom: 1px solid #e0e0e0;
     text-align: left;
@@ -105,11 +120,14 @@ canvas {
     border-radius: 8px;
     padding: 20px;
     margin-top: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
 .scroll-container {
-    max-height: 300px;      /* Begrenzte Höhe */
-    overflow-y: auto;       /* Vertikales Scrollen bei Überlauf */
+    max-height: 300px;
+    /* Begrenzte Höhe */
+    overflow-y: auto;
+    /* Vertikales Scrollen bei Überlauf */
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -122,10 +140,86 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+    padding: 30px;
+    list-style: none;
+}
 
+.logging {
+    background: #0d47a1;
+    color: white;
+    padding: 12px;
+    padding-left: 50%;
+    padding-right: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+ul
+{
+    list-style-type: none;
+    padding: 12px 40px;
+}
+
+.auswahlStart
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+}
+.chart-button
+{
+    background:teal;
+    color: white;
+    padding: 12px;
+    padding-left: 25%;
+    padding-right: 25%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.chart-button:hover,
+.chart-button:focus {
+    background:teal;
+    box-shadow: 0 6px 20px teal;
+    transform: translateY(-3px);
+    outline: none;
+}
+
+/* style.css */
+body.dark {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark table {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+body.dark a,
+body.dark .button-link {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+body.dark input,
+body.dark select {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #555;
+}

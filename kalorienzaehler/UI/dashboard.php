@@ -14,7 +14,7 @@ if (!isset($_SESSION['username'])) {
 
 $user = $_SESSION['username'];
 
-// Kalorien aus Verlauf berechnen (Makros × Kalorienfaktor)
+// Kalorien aus Verlauf berechnen (Makros * Kalorienfaktor * (Menge/100))
 $stmt = $pdo->prepare("
     SELECT 
         v.Datum,
@@ -54,6 +54,7 @@ $weightData = array_map(fn($v) => $v['gewicht'] ?? null, $daten);
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
@@ -61,6 +62,7 @@ $weightData = array_map(fn($v) => $v['gewicht'] ?? null, $daten);
     <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
     <h2>Kalorientracker – Verlauf</h2>
 
@@ -137,7 +139,8 @@ $weightData = array_map(fn($v) => $v['gewicht'] ?? null, $daten);
     </script>
 
     <br>
-<a href="start.php" class="button-link">Zurück zur Startseite</a>
+    <a href="start.php" class="button-link">Zurück zur Startseite</a>
 
 </body>
+
 </html>

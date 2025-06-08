@@ -21,12 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Gewicht eintragen</title>
     <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
     <h2>Gewicht eintragen</h2>
     <form method="POST">
@@ -36,9 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>Gewicht (kg):
             <input type="number" name="gewicht" step="0.1" required>
         </label><br><br>
-        <button type="submit">Speichern</button>
+        <div class="button-container">
+            <button class="logging" type="submit">Speichern</button>
+        </div>
     </form>
     <br>
     <a href="start.php" class="button-link">Zurück zur Startseite</a>
 </body>
+
 </html>
