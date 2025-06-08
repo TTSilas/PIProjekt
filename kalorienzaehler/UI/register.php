@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // User in DB anlegen
     $stmt = $pdo->prepare("INSERT INTO User (UserID, Passwort) VALUES (?, ?)");
     if ($stmt->execute([$username, $passwordHash])) {
-        echo "Benutzer erfolgreich registriert. <a href='login.html'>Zum Login</a>";
+        echo "Benutzer erfolgreich registriert. <a href='index.html'>Zum Login</a>";
     } else {
         echo "Fehler bei der Registrierung.";
     }
