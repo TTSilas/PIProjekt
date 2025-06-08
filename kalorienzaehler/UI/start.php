@@ -9,9 +9,17 @@ if (!isset($_SESSION['username'])) {
 
 $user = $_SESSION['username'];
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+    echo "DELETE VerlaufID: $delete_id, UserID: $user<br>";  // Debug
+    $stmt = $pdo->prepare("DELETE FROM Verlauf WHERE VerlaufID = ? AND UserID = ?");
+    $stmt->execute([$delete_id, $user]);
+}
+
+
 // Hier deine SQL-Abfrage (Produktliste mit Menge usw.)
 $stmt = $pdo->prepare("
-    SELECT v.Datum, p.Name, p.Kategorie, v.Menge,
+    SELECT v.VerlaufID, v.Datum, p.Name, p.Kategorie, v.Menge,
            (m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9) * (v.Menge / 100) AS KalorienProEinheit
     FROM Verlauf v
     JOIN Produkt p ON v.EAN = p.EAN
@@ -152,6 +160,7 @@ $heuteMakros = $stmt->fetch(PDO::FETCH_ASSOC);
                         <th>Kategorie</th>
                         <th>Menge (g)</th>
                         <th>Kalorien (kcal)</th>
+                        <th>Aktion</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -162,6 +171,13 @@ $heuteMakros = $stmt->fetch(PDO::FETCH_ASSOC);
                             <td><?= htmlspecialchars($produkt['Kategorie']) ?></td>
                             <td><?= htmlspecialchars($produkt['Menge']) ?></td>
                             <td><?= round($produkt['KalorienProEinheit']) ?></td>
+                            <td>
+                                <form method="post" style="display:inline;" id="deleteDis">
+                                    <input type="hidden" name="delete_id"
+                                        value="<?= htmlspecialchars($produkt['VerlaufID']) ?>">
+                                    <button type="submit" class="delete-button">🗑️</button>
+                                </form>
+                            </td>
 
                         </tr>
                     <?php endforeach; ?>

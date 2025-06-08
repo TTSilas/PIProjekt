@@ -223,3 +223,8 @@ body.dark select {
     color: #ffffff;
     border: 1px solid #555;
 }
+
+#deleteDis
+{
+    padding: 0px;
+}
