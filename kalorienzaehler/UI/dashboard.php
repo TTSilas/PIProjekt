@@ -2,11 +2,7 @@
 session_start();
 require 'db.php';
 
-// Fehler anzeigen (nur für Entwicklung)
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// Benutzer eingeloggt?
+//Prüfe ob User sich eingeloggt hat, wenn nicht: Mach dich vom Acker! (Leite User auf die Login Seite)
 if (!isset($_SESSION['username'])) {
     header('Location: login.html');
     exit;
@@ -14,7 +10,7 @@ if (!isset($_SESSION['username'])) {
 
 $user = $_SESSION['username'];
 
-// Kalorien aus Verlauf berechnen (Makros * Kalorienfaktor * (Menge/100))
+//Kalorien aus Verlauf berechnen (Makros * Kalorienfaktor * (Menge/100))
 $stmt = $pdo->prepare("
     SELECT 
         v.Datum,
@@ -29,12 +25,12 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user]);
 $kalorien = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Gewichtseinträge
+//Gewichtseinträge
 $stmt = $pdo->prepare("SELECT Datum, Gewicht FROM Gewichtseintrag WHERE UserID = ? ORDER BY Datum");
 $stmt->execute([$user]);
 $gewicht = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Daten kombinieren
+//Daten kombinieren
 $daten = [];
 foreach ($kalorien as $k) {
     $datum = $k['Datum'];
