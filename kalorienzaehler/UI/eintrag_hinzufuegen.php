@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="date" name="datum" value="<?= date('Y-m-d') ?>" required>
         </label><br><br>
 
-        <label>Produktname:
+        <label>Produktname/Kategorie:
             <input type="text" id="produktname" name="produktname" required>
             <input type="hidden" id="ean" name="ean">
         </label><br><br>
