@@ -11,7 +11,7 @@ $user = $_SESSION['username'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
-    echo "DELETE VerlaufID: $delete_id, UserID: $user<br>";  // Debug
+    //echo "DELETE VerlaufID: $delete_id, UserID: $user<br>";  // Debug
     $stmt = $pdo->prepare("DELETE FROM Verlauf WHERE VerlaufID = ? AND UserID = ?");
     $stmt->execute([$delete_id, $user]);
 }
@@ -81,6 +81,7 @@ $heuteMakros = $stmt->fetch(PDO::FETCH_ASSOC);
         <ul>
             <li><a href="dashboard.php" class="button-link">Verlauf und Diagramm</a></li>
             <li><a href="gewicht_eintragen.php" class="button-link">Gewicht eintragen</a></li>
+            <li><a href="VerlaufSicht.php" class="button-link">Produkt Verlauf</a></li>
             <li><a href="eintrag_hinzufuegen.php" class="button-link">Produkt eintragen</a></li>
             <li><a href="logout.php" class="button-link">Ausloggen</a></li>
         </ul>

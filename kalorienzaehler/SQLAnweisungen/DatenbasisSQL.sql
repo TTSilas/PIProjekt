@@ -62,6 +62,7 @@ CREATE TABLE Sucht
     UserID        varchar(30),
     EAN           double,
     Suchzeitpunkt datetime,
+    EingbMenge double(10, 2),
     FOREIGN KEY (UserID) REFERENCES User (UserID),
     FOREIGN KEY (EAN) REFERENCES Produkt (EAN)
     /*Die Zwischentabelle "Sucht" verbindet User mit Produkt, damit dieser Produkte suchen kann. Dies geschieht mittelst einer n:m Assoziation, da jedes Produkt von jedem User gesucht werden können soll und umgekehrt.

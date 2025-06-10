@@ -12,10 +12,14 @@ $user = $_SESSION['username'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ean = $_POST['ean'];
     $datum = $_POST['datum'] ?? date('Y-m-d');
+    $time = $_POST['time'] ?? date('Y-m-d H:i:s');
     $menge = $_POST['menge'];
 
     $stmt = $pdo->prepare("INSERT INTO Verlauf (UserID, EAN, Datum, Menge) VALUES (?, ?, ?, ?)");
     $stmt->execute([$user, $ean, $datum, $menge]);
+
+    $stmt = $pdo->prepare("INSERT INTO Sucht (UserID, EAN, Suchzeitpunkt, EingbMenge) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$user, $ean, $time, $menge]);
 
     echo "Eintrag wurde gespeichert.";
 }

@@ -115,7 +115,7 @@ th {
     font-weight: bold;
 }
 
-canvas {
+canvas{
     background: white;
     border-radius: 8px;
     padding: 20px;
@@ -199,32 +199,40 @@ ul
     outline: none;
 }
 
-/* style.css */
-body.dark {
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-body.dark table {
-    background-color: #1e1e1e;
-    color: #ffffff;
-}
-
-body.dark a,
-body.dark .button-link {
-    background-color: #333;
-    color: #fff;
-    border: 1px solid #555;
-}
-
-body.dark input,
-body.dark select {
-    background-color: #1e1e1e;
-    color: #ffffff;
-    border: 1px solid #555;
-}
-
 #deleteDis
 {
     padding: 0px;
+}
+
+img
+{
+    
+    border-radius: 45px;
+    box-shadow: 0 0 100px rgb(0, 218, 218);
+    animation: twixAnim;
+    animation-duration: 15s;
+    animation-iteration-count: infinite;
+    
+}
+
+@keyframes twixAnim {
+    0%{width: 400px;
+    height: 400px;}
+    25%{width: 800px;
+    height: 400px;}
+    50%{width: 200px;
+    height: 400px;}
+    75%{width: 200px;
+    height: 800px;}
+    100%{width: 400px;
+    height: 400px;}
+}
+
+.TwixDiv
+{
+    height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
 }
