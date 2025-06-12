@@ -2,8 +2,8 @@
 //Für PHP relevante Infos, um auf Mariadb zugreifen zu können.
 $host = 'localhost';
 $dbname = 'Kalorientracker';
-$user = 'silas';
-$password = '1806';
+$user = '';
+$password = '';
 
 //Try-catch Methode überprüft, ob die Verbindung erfolgreich ist. Wenn nicht, gebe catch-Klausel zurück.
 try {
