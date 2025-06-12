@@ -1,10 +1,11 @@
 <?php
 session_start();
+//Vererbung der Attribute von "db.php" zur Verbindung mit der Datenbank
 require 'db.php';
 
 //Prüfe ob User sich eingeloggt hat, wenn nicht: Mach dich vom Acker! (Leite User auf die Login Seite)
 if (!isset($_SESSION['username'])) {
-    header('Location: login.html');
+    header('Location: index.html');
     exit;
 }
 
@@ -25,7 +26,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user]);
 $kalorien = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//Gewichtseinträge
+//Gewichtseinträge SQL-Abfrage vorbereiten
 $stmt = $pdo->prepare("SELECT Datum, Gewicht FROM Gewichtseintrag WHERE UserID = ? ORDER BY Datum");
 $stmt->execute([$user]);
 $gewicht = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -40,9 +41,9 @@ foreach ($gewicht as $g) {
     $datum = $g['Datum'];
     $daten[$datum]['gewicht'] = $g['Gewicht'];
 }
-ksort($daten); // Nach Datum sortieren
+ksort($daten); //Nach Datum sortieren
 
-// Für JavaScript vorbereiten
+//Für JavaScript vorbereiten
 $dates = array_keys($daten);
 $caloriesData = array_map(fn($v) => $v['kalorien'] ?? 0, $daten);
 $weightData = array_map(fn($v) => $v['gewicht'] ?? null, $daten);
@@ -119,10 +120,10 @@ $weightData = array_map(fn($v) => $v['gewicht'] ?? null, $daten);
                 }
             }
         };
-
+        //Erstelle hier den Chart mit den beschriebenen Werten in Variable "chartConfig"
         const myChart = new Chart(ctx, chartConfig);
 
-        // Checkbox-Steuerung
+        //Checkbox-Steuerung
         document.getElementById('showCalories').addEventListener('change', function () {
             myChart.data.datasets[0].hidden = !this.checked;
             myChart.update();

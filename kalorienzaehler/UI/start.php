@@ -1,7 +1,9 @@
 <?php
 session_start();
+//Vererbung der Attribute von "db.php" zur Verbindung mit der Datenbank
 require 'db.php';
 
+//Überprüfe, ob User angemeldet ist, wenn nicht: Schick ihn auf die Login seite
 if (!isset($_SESSION['username'])) {
     header('Location: index.html');
     exit;
@@ -17,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
 }
 
 
-// Hier deine SQL-Abfrage (Produktliste mit Menge usw.)
+//Berechnung der Kalorien und Abrufen der Makros
 $stmt = $pdo->prepare("
     SELECT v.VerlaufID, v.Datum, p.Name, p.Kategorie, v.Menge,
            (m.Kohlenhydrate * 4 + m.Eiweiss * 4 + m.Fett * 9) * (v.Menge / 100) AS KalorienProEinheit
@@ -30,10 +32,10 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user]);
 $produkte = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Makro-Summen berechnen (gesamt oder heute)
+//Makro-Summen berechnen (gesamt oder heute)
 $heute = date('Y-m-d');
 
-// Für Gesamt
+//Für gesamten Pie-Chart
 $stmt = $pdo->prepare("
     SELECT 
         SUM(m.Kohlenhydrate * v.Menge / 100) AS Kohlenhydrate,
@@ -47,7 +49,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$user]);
 $gesamtMakros = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Für Heute
+//Für heutigen Pie-Chart
 $stmt = $pdo->prepare("
     SELECT 
         SUM(m.Kohlenhydrate * v.Menge / 100) AS Kohlenhydrate,
@@ -88,13 +90,17 @@ $heuteMakros = $stmt->fetch(PDO::FETCH_ASSOC);
     </div>
     <h3>Makronährstoffverteilung</h3>
     <div class="button-container">
+        <!--Auswahl, ob der Pie-Chart für heute, oder insgesamt angegeben werden soll.-->
         <button class="chart-button" onclick="zeigeDiagramm('heute')" id="btleft">Heute</button>
         <button class="chart-button" onclick="zeigeDiagramm('gesamt')" id="btright">Gesamt</button>
     </div>
+    <!--Pie-Chart Canvas-->
     <canvas id="makroChart" width="300" height="300"></canvas>
 
+    <!--Externe Quelle für Pie-Charts-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        //Speichere Makros von heute und gesamte Makros in jeweilige Variablen, als einzelnes Objekt.
         const makrosHeute = <?= json_encode($heuteMakros) ?>;
         const makrosGesamt = <?= json_encode($gesamtMakros) ?>;
 
@@ -156,6 +162,7 @@ $heuteMakros = $stmt->fetch(PDO::FETCH_ASSOC);
             <table>
                 <thead>
                     <tr>
+                        <!--Lege eine Tabelle mit Spaltennamen in der Kopfzeile an-->
                         <th>Datum</th>
                         <th>Produktname</th>
                         <th>Kategorie</th>
@@ -165,21 +172,24 @@ $heuteMakros = $stmt->fetch(PDO::FETCH_ASSOC);
                     </tr>
                 </thead>
                 <tbody>
+                    <!--Für jede Spalte aus dem Array "produkte", speichere einzelne Objekt (also ganze Spalten) in "produkt"-->
                     <?php foreach ($produkte as $produkt): ?>
                         <tr>
+                            <!--Füge der Tabelle Spalten hinzu, wobei jedes benötigte Attribut vom jeweiligen Objekt "produkt" aus dessen derzeitigen Loop, entnommen wird-->
                             <td><?= htmlspecialchars($produkt['Datum']) ?></td>
                             <td><?= htmlspecialchars($produkt['Name']) ?></td>
                             <td><?= htmlspecialchars($produkt['Kategorie']) ?></td>
                             <td><?= htmlspecialchars($produkt['Menge']) ?></td>
                             <td><?= round($produkt['KalorienProEinheit']) ?></td>
                             <td>
+                                <!--Erstelle Formular für einen Lösch-Knopf der einzelnen Elemente-->
                                 <form method="post" style="display:inline;" id="deleteDis">
+                                    <!--Wenn der Knopf gedrückt wird, wird das Formular abgesendet und die Zeile wird gelöscht-->
                                     <input type="hidden" name="delete_id"
                                         value="<?= htmlspecialchars($produkt['VerlaufID']) ?>">
                                     <button type="submit" class="delete-button">🗑️</button>
                                 </form>
                             </td>
-
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
